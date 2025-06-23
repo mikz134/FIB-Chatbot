@@ -8,6 +8,6 @@ SECRET_KEY = 'development'
 # Read: https://flask-oauthlib.readthedocs.io/en/latest/client.html#lazy-configuration
 # Get them: https://raco.fib.upc.edu/api/v2/o/
 RACO = {
-    'consumer_key': '',
-    'consumer_secret': ''
+    'consumer_key': 'KEY_NAME',
+    'consumer_secret': 'API_KEY'
 }
