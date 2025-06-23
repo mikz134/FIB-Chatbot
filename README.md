@@ -3,6 +3,8 @@
 El proyecto tiene objetivo crear un ChatBot assistente para dar informacion de la FIB.
 Utilizando NLP, LLMs, BBDD vectoriales y junto con una interfaz web utilizando Flask, logramos crear un Bot automatizado que busca sobre una base de datos informacion relevante y responde con lenguage natural a tus dudas sobre la FIB.
 
+https://mwiki.fib.upc.edu/pti/index.php/Categor%C3%ADa:FIBerBot
+
 # Configuración del sistema
 
 ## Fichero de configuración config.py
