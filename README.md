@@ -7,12 +7,13 @@ Utilizando NLP, LLMs, BBDD vectoriales y junto con una interfaz web utilizando F
 
 https://mwiki.fib.upc.edu/pti/index.php/Categor%C3%ADa:FIBerBot
 
+![Screenshot_from_2024-12-23_13-50-21](https://github.com/user-attachments/assets/83f5ba63-478a-428c-a1af-68f5efa8f22b)
+
 # Configuración del sistema
 
 ## Fichero de configuración config.py
 Este fichero debe contener el client id y client secret de un aplicación registrada en la API de la FIB. Para mas información hay un fichero de ejemplo en `config.py`
 
-![Screenshot_from_2024-12-23_13-50-21](https://github.com/user-attachments/assets/83f5ba63-478a-428c-a1af-68f5efa8f22b)
 
 ## variables de entorno
 Ejemplo de `.env`
