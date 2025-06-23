@@ -1,0 +1,16 @@
+services:
+  rag:
+    build: .
+    volumes:
+      - ./chroma:/src/chroma
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_SERVER_URL=http://ollama:11434
+    ports:
+      - 8080:8080
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - /usr/share/ollama/.ollama:/root/.ollama

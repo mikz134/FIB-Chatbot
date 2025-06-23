@@ -1,0 +1,13 @@
+README.md
+venv/
+.venv/
+.env
+document_source/
+__pycache__/
+chroma/
+.vscode/
+node_modules/
+checkpoints.sqlite
+checkpoints.sqlite-shm
+checkpoints.sqlite-wal
+db.sqlite

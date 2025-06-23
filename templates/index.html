@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="{{ url_for('static', filename='tailwind/output.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="flex bg-[#212121] h-screen">
+    <div id="lateral" class= "flex flex-col bg-[#171717] h-full w-[20%] hidden" >
+        <h2 class = " flex text-white font-semibold pt-5 justify-center">History</h2>
+        <div class = "flex flex-col flex-1 box-border"> 
+            <div id="historic-container"  >
+            </div>
+            <div id="delete-chats" class="flex hover:cursor-pointer bg-white rounded-lg mt-auto p-2 m-4 justify-center"> 
+                Delete all chats
+            </div> 
+        </div> 
+    </div>
+    <div class="flex flex-1 w-full flex-col p-5 box-border">
+        <div class="flex h-10 w-full justify-between">
+            <div class="flex items-center"> 
+                <div id="history-button" class="mdi mdi-text-box-outline mr-2 hover:cursor-pointer font-semi-bold text-[#b4b4b4] text-2xl"  ></div> 
+                <div id="new-chat" class="mdi mdi-plus mr-2 hover:cursor-pointer font-semi-bold text-[#b4b4b4] text-2xl"> </div> 
+                <div class="text-[#b4b4b4] font-semibold "> 
+                    ChatBot FIB
+                </div>
+            </div>
+
+            <div class = "flex gap-1" > 
+                <label class="inline-flex items-center cursor-pointer">
+                    <div id="mode" class="font-semibold text-[#b4b4b4] pr-3"> local </div> 
+                    <input id="chat-mode" type="checkbox" value="" class="sr-only peer">
+                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </label>
+                <!-- <div class = "rounded-full px-3 py-2 font-semibold items-center text-[#0d0d0d] bg-green-300 hover:cursor-pointer" id="source-switch"> nivul? </div> --> 
+                <div class= "rounded-full px-3 py-2 font-semibold items-center text-[#0d0d0d] bg-[#f9f9f9]  hover:cursor-pointer" id="open-context-view" > Context </div>
+                <div id="logout_button" class="rounded-full px-3 py-2 font-semibold items-center text-[#0d0d0d] bg-[#f9f9f9] hover:cursor-pointer"> Log Out </div> 
+                <!-- <div class="rounded-full px-3 py-2 font-semibold items-center text-[#0d0d0d] bg-[#f9f9f9] hover:cursor-pointer" id="login"> UPC session</div> --> 
+            </div>
+        </div>
+        <div class="flex flex-col flex-1 " > 
+            <div id="conversation" class="flex flex-col max-h-[87vh] overflow-y-auto w-[50%] mx-auto gap-2 "> 
+            </div> 
+            <div class="flex justify-center mx-auto mt-auto w-[70%] pl-3 p-3 bg-[#2f2f2f] rounded-full "> 
+                <i class="mdi mdi-web py-1 pl-2 text-2xl text-[#676767] hover:cursor-pointer"  id="urlEmbed"> </i>
+                <div class=" py-1 rounded-full hover:cursor-pointer"> 
+                    <label class="flex items-center hover:cursor-pointer"> 
+                        <i class="mdi mdi-paperclip text-2xl text-[#676767]" ></i>  
+                        <input type="file" id="fileInput" class="hidden" accept="application/pdf"/>
+                    </label>  
+                </div>
+                <input class="w-full outline-none pl-2 bg-[#2f2f2f] text-[#b4b4b4]" text="text" id="userInput" placeholder="Message Fiberbot"/>
+                <div class="p-1 px-2 rounded-full bg-[#ffffff] hover:bg-[#b4b4b4] hover:cursor-pointer" id="sendButton"> 
+                    <i class="mdi mdi-arrow-up text-2xl"> </i>
+                </div>
+            </div> 
+        </div>
+    </div>
+    <div id="popup-context" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-11/12 md:w-1/3 rounded-lg shadow-lg relative"> 
+            <button class="absolute top-2 right-2 text-black pr-2 hover:text-gray-500 text-2xl" id="close-context-view">
+                &times;
+            </button>
+            <div class="p-6 ">
+                <h2 class="text-xl font-semibold mb-4">Context Handler </h2>
+                <div class=" justify-between w-full " id="context-container" >
+                </div>
+            </div>
+        </div>    
+    </div>
+    <div id="popup-urls" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-11/12 md:w-1/3 rounded-lg shadow-lg relative"> 
+            <button class="absolute top-2 right-2 text-gray-500 pr-2 hover:text-black text-2xl" id="close-modal">
+                &times;
+            </button>
+            <div class="p-6 ">
+                <h2 class="text-xl font-semibold mb-4">Embed Website</h2>
+                <p class="mb-4">
+                    Write the url to embed.      
+                </p>
+                <div class="flex" >
+                    <input id="urlInput" class="w-full p-1 rounded-lg shadow-lg" > </input >  
+                    <i class="mdi mdi-arrow-right text-2xl text-black pl-2 pb-1 hover:cursor-pointer" id="urlButton"> </i>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <script> 
+
+        let contextList= []; 
+        let mode = "local"; 
+        let historicList = [];
+        let historic = false;
+        let chatId= "";
+        let chats = {};
+        let title = "";
+        const containerList = document.getElementById('context-container');
+
+        const userInput = document.getElementById('userInput');
+        const urlInput = document.getElementById('urlInput');
+        const sendButton = document.getElementById('sendButton');
+        const logout_button = document.getElementById('logout_button');
+        const conversationDiv = document.getElementById('conversation');
+
+        const modal = document.getElementById('popup-urls');
+        const showModalButton = document.getElementById('urlEmbed');
+        const closeModalButton = document.getElementById('close-modal');
+        const urlButton = document.getElementById('urlButton'); 
+        const source = document.getElementById('source-switch');
+
+
+        const historic_container = document.getElementById('historic-container');
+        const lateral = document.getElementById('lateral');
+        const lateral_historic = document.getElementById('history-button');
+        const context = document.getElementById('popup-context');
+        const openContextView = document.getElementById('open-context-view');
+        const closeContextView = document.getElementById('close-context-view');
+        
+        function handleErrors(response) {
+            if (response.status === 401) {
+                window.location.href = '/login_view';
+                throw new Error('Unauthorized');
+            }
+            return response;
+        }
+
+        document.getElementById('new-chat').addEventListener('click', newChat);
+        function newChat()  { 
+            conversationDiv.innerHTML = '';
+            title = "";
+            chatId = "";
+        }
+        
+        logout_button.addEventListener('click', function() {
+            try {
+                // const response = fetch('/logout');
+                window.location.href = '/logout';
+                if(!response.ok ) { console.log(response.messmessage); handleErrors(response);}
+            } catch (e) {
+                console.log(e);
+            }        
+
+        })
+        document.getElementById('chat-mode').addEventListener('change', function() {
+            if (this.checked) {
+                mode = "cloud"; 
+                document.getElementById('mode').innerHTML = "cloud"; 
+                console.log("estàs en mode: " + mode );
+            } else {
+                mode = "local";
+                document.getElementById('mode').innerHTML = "local";
+                console.log("estàs en mode: " + mode );
+            }
+        }); 
+        document.getElementById('fileInput').addEventListener('input', async () => {
+            userInput.value = 'Loading...';
+            userInput.disabled = true; 
+            const file = document.getElementById('fileInput').files[0];
+            if(!file) return;
+            const formData = await new FormData();
+            formData.append("file",file);
+            try {
+                const response = await fetch('/embed_pdf', {
+                    method: 'POST',
+                    body: formData,
+                });
+                 if(!response.ok) handleErrors(response);
+            }catch (error) {
+                console.log('Error communicating with the Flask server:', error);
+            }
+            userInput.value = '';
+            userInput.disabled = false; 
+        })
+
+        document.getElementById('delete-chats').addEventListener('click', async () => {
+            const conf = confirm("This action is permanent. Are you sure you want to delete all chats?");
+            if(!conf) return;
+            try{
+                const response = await fetch('/dropallchats',{ 
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                }); 
+                if(!response.ok) { console.log(data); handleErrors(response)}
+                const data = await response.json() 
+                console.log(data);
+                await newChat()
+                await getHistoric();
+                await renderHistoric();
+            } catch (e) {
+               console.log(e); 
+            }
+
+        });
+
+        async function createChat() {
+            console.log("creant un nou xat");
+            try{
+                const response = await fetch('/new_chat',{ 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({title: title}),
+                }); 
+                if(!response.ok) { console.log(data); handleErrors(response)}
+                const data = await response.json() 
+                console.log(data);
+                chatId = data.chat.id
+                chats[chatId] = [];
+                renderChat();
+            } catch (e) {
+               console.log(e); 
+            }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return; // Prevent sending empty messages
+
+            userInput.value = 'Loading....';
+            userInput.disabled = true; 
+            console.log("info: ", chatId, title)
+            if(title == "") {
+                title = message; 
+                await createChat(); 
+                await getHistoric();
+                await renderHistoric();
+            }
+            chats[chatId].push(message); 
+            try {
+                const body = JSON.stringify({ query: message, mode: mode}); 
+                const url = '/query/' + chatId;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: body, 
+                });
+                if(!response.ok) handleErrors(response); 
+                const data = await response.json();
+
+                const flaskResponseDiv = document.createElement('div');
+                flaskResponseDiv.className = 'flask';
+                const html = marked.parse(data.message);
+                chats[data.chatId].push(html);
+            } catch (error) {
+                console.error('Error communicating with the Flask server:', error);
+            }
+
+            renderChat();
+            document.getElementById('userInput').value = '';
+            userInput.disabled = false; 
+            console.log(chats);
+        };
+        sendButton.addEventListener('click',sendMessage);
+        userInput.addEventListener('keypress', async (e) => {
+            if(e.key === 'Enter'){
+                e.preventDefault();
+                await sendMessage();
+            }
+        });
+        
+        async function getHistoric() {
+            try {
+                const response = await fetch('/chats',{ 
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }, 
+                });
+                if(!response.ok) handleErrors(response);
+                const data = await response.json();
+                //console.log (data); 
+                historicList= data;
+            } catch (e) {
+                console.log(e);
+            }
+            console.log("historic carregat");
+        }
+        async function getContext() {
+            try {
+                const response = await fetch('/get_all_sources',{ 
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }, 
+                })
+                if(!response.ok) handleErrors(response);
+                const data = await response.json();
+                //console.log (data.sources); 
+                contextList = data.sources;
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        async function deleteItem(index) {
+            //console.log("epppp que estic borrant una font", index, contextList[index]);
+            try {
+                const response = await fetch('/delete_source', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({source: contextList[index]}),
+                })
+                if(!response.ok) { console.log("El context ${contextList[index]} no s'ha pogut borrar."); handleErrors(response);} 
+                else { 
+                    //console.log("${contextList[index]} borrat amb èxit.");
+                    contextList.splice(index, 1);
+                    renderList();
+                }
+            } catch (e) {
+                console.log(e);
+            }   
+        }
+
+        async function renderList() {
+            containerList.innerHTML = ''; 
+            contextList.forEach((item, index) => {
+                //console.log("ep mestic imprimint: ", index, item);  
+                
+                const listItem = document.createElement('li');
+                listItem.className = 'flex justify-between w-full'; 
+                listItem.innerHTML = `
+                    <div class = "truncate" > ${item} </div> 
+                    <div class = "flex gap-1 justify-auto"> 
+                    <!-- <button download-index="${index}" class= "mdi mdi-download text-black text-xl hover:cursor-pointer">  </button> -->  
+                        <button delete-index="${index}" class= "mdi mdi-trash-can text-xl text-red-800 hover:cursor-pointer"> </button> 
+                    </div>
+                `;
+                containerList.appendChild(listItem);
+            });
+            document.querySelectorAll("[delete-index]").forEach((button) => 
+                button.addEventListener("click", (event) => {
+                    const index = event.target.getAttribute("delete-index");
+                    deleteItem(index);
+                })
+            );
+       }
+        async function getMessages (index) {
+            title = historicList[index].title;
+            const url = '/chats/' + historicList[index].id + '/messages';
+            try{
+                const response = await fetch(url, {
+                    method:'GET', 
+                    headers: {'Content-Type': 'application/json'},
+                }) 
+                if(!response.ok) { console.log(response.error); handleErrors(response);}
+                const data = await response.json();
+                //console.log(data.messages)
+                chats[historicList[index].id] = data.messages.map((element) => element.content); 
+            } catch (e) {
+                console.log(e);
+            }
+        } 
+
+        async function renderChat() {
+            conversationDiv.innerHTML = '';
+            chats[chatId].forEach((item, index) => {
+                //console.log("chat item", index, item);
+                const listItem = document.createElement('div');
+                if(index%2) listItem.className = " text-lg text-[#e1e1e1] p-2 px-3 mr-auto ";
+                else listItem.className = " text-lg text-[#e1e1e1] p-2 px-3 ml-auto bg-[#2f2f2f] rounded-full";
+                listItem.innerHTML = item;
+                conversationDiv.appendChild(listItem);
+                conversationDiv.scrollTop = conversationDiv.scrollHeight;
+                
+            });
+        }
+        async function deleteHistoric(index){
+            const url = '/drop_chat/' + historicList[index].id; 
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }, 
+                })
+                if(!response.ok) { console.log("El context ${contextList[index]} no s'ha pogut borrar."); handleErrors(response);} 
+                else { 
+                    console.log("Chat ${contextList[index]} borrat amb èxit.");
+                    delete chats[historicList[index].id];
+                }
+            } catch (e) {
+                console.log(e);
+            }  
+        }
+        async function renderHistoric() {
+            historic_container.innerHTML = ''; 
+            historicList.forEach((item, index) => {
+                //console.log("historic item", index, item);
+                const listItem = document.createElement('li');
+                listItem.className = 'flex justify-between w-full'; 
+                listItem.innerHTML = `
+                    <div class ="flex justify-between w-full px-2 py-1">
+                        <div select-index="${index}" class = "hover:cursor-pointer truncate text-white"> ${item.title} </div> 
+                        <div delete-historic="${index}" class = "hover:cursor-pointer text-white mdi mdi-trash-can text-xl" > </div> 
+                    </div> 
+                `;
+                historic_container.appendChild(listItem);
+            });
+            document.querySelectorAll("[delete-historic]").forEach( (div) => 
+                div.addEventListener("click", async (event) => {
+                    const index = event.target.getAttribute("delete-historic");
+                    await deleteHistoric(index);
+                    if(historicList[index].id == chatId) await newChat()
+                    await getHistoric();
+                    await renderHistoric();
+                })
+            );
+
+            document.querySelectorAll("[select-index]").forEach( (element) => 
+                element.addEventListener("click", async (event) => {
+                    const index = event.target.getAttribute("select-index");
+                    //console.log ("item seleccionat");
+                    chatId = historicList[index].id;
+                    title = historicList[index].title;
+                    await getMessages(index); 
+                    await renderChat()
+                })
+            );
+        } 
+        
+        async function sendUrl() {
+            const url = urlInput.value; 
+            closeModal();
+            userInput.value = 'Loading....';
+            urlInput.disabled = true; 
+            if(!url.length > 0) return ;
+
+            try {
+                const response = await fetch('/embed_url',{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({url:url})
+                });
+
+                if(!response.ok) handleErrors(response);
+            }catch{
+                const data = await response.json();
+            }
+            userInput.value = '';
+            urlInput.disabled = false; 
+        }
+
+        urlInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter'){
+                e.preventDefault();
+                sendUrl();
+            }
+        }); 
+        urlButton.addEventListener('click', sendUrl );
+        
+        // butons de les views
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+        function openModal() {
+            modal.classList.remove('hidden');
+        }
+
+        showModalButton.addEventListener('click', () => {
+            openModal();
+        });
+        closeModalButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal(); // Close modal on outside click
+        });
+
+        async function openHistoric(){
+            lateral.classList.remove('hidden');
+            historic=true;
+            await getHistoric();
+            renderHistoric();
+        }
+        function closeHistoric(){
+            lateral.classList.add('hidden')
+            historic=false;
+        }
+        
+        lateral_historic.addEventListener('click', () => {
+            if(historic) closeHistoric();
+            else openHistoric(); 
+        });
+        function closeContext() {
+            context.classList.add('hidden');
+        }
+        async function openContext() {
+            context.classList.remove('hidden');
+            await getContext();
+            renderList();
+        }
+        closeContextView.addEventListener('click', closeContext);
+        context.addEventListener('click', (e) => {
+            if (e.target === context) closeContext(); // Close modal on outside click
+        });
+        openContextView.addEventListener('click', () => {
+            openContext();
+        });
+    </script>
+</body>
+</html>
+

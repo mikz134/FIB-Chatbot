@@ -1,0 +1,11 @@
+__pycache__/
+document_source/
+.venv/
+venv/
+.vscode/
+__pycache__/
+checkpoints.sqlite
+checkpoints.sqlite-shm
+checkpoints.sqlite-wal
+db.sqlite
+.gitignore
